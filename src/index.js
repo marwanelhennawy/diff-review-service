@@ -15,6 +15,7 @@ if (!BEARER_TOKEN) {
   console.error('FATAL: BEARER_TOKEN env var is not set.');
   process.exit(1);
 }
+console.log('BEARER_TOKEN length:', BEARER_TOKEN.length, JSON.stringify(BEARER_TOKEN));
 
 const startTime = Date.now();
 const app = express();
