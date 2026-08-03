@@ -44,6 +44,12 @@ LLM responses are validated and converted into the same finding format used by t
 
 * **LLM failure handling:** Tested the LLM provider with invalid credentials and confirmed that jobs transition to `failed` status with a clear provider error message while the service remains available.
 
+* **Concurrency:** Confirmed at least 4 jobs process simultaneously and a 5th submitted while all workers are busy queues correctly rather than failing.
+
+* **Contract lifecycle:** Verified that `POST /v1/reviews` always reports `"status": "queued"` on the initial `202` response, even when the mock provider finishes before the response is sent — caught and fixed a bug where a fast job was reporting `"done"` on that first response instead.
+
+* **Spec accuracy:** Confirmed the limits declared in `/spec` (payload size, chunk size, max concurrent jobs, rate limit) match the service's actual enforced behavior.
+
 ## Testing scripts
 
 The repository includes PowerShell scripts used to manually verify:
@@ -66,6 +72,8 @@ The final implementation decisions were reviewed manually and adjusted based on 
 An AI suggestion was to introduce a database layer for storing jobs, findings, and cache entries permanently.
 
 I decided not to implement this because the task evaluates a running service within a limited scoring window, and an in-memory design was sufficient for the required functionality. Instead, I focused on correctly implementing the required behaviors such as caching, idempotency, concurrency control, and SSE replay.
+
+Also the AI's first version of the job-completion path returned the real status on the initial response; I caught during testing that this violated the contract's 202-must-say-queued requirement and had it fixed
 
 ## What I would improve with more time
 
