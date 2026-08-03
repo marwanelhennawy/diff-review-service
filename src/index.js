@@ -145,7 +145,7 @@ const options = {
 
   return res.status(202).json({
   jobId: job.jobId,
-  status: job.status
+  status: 'queued'
 });
 });
 
